@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -19,6 +20,11 @@ TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 STATIC_DIR = os.path.join(BASE_DIR, 'static') 
 STATIC_ROOT_DIR = os.path.join(BASE_DIR, 'autoStatic') 
 MEDIA_DIR = os.path.join(BASE_DIR, 'media') 
+
+# stripe 
+STRIPE_PUBLISHABLE_KEY = config('STRIPE_PUBLISHABLE_KEY')
+STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -43,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # installed app 
     'home',
+    'payments',
     # third party app 
 ]
 
@@ -122,8 +129,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = '/static/'
-STATICFILES_DIR = [STATIC_DIR] # Search during collectstatic
+STATIC_URL = 'static/'
+STATICFILES_DIR = [
+    STATIC_DIR,
+] # Search during collectstatic
 STATIC_ROOT = STATIC_ROOT_DIR # collectstatic==> automatically created 'autoStatic' folder.
 MEDIA_ROOT = MEDIA_DIR
 MEDIA_URL = '/media/'
