@@ -59,5 +59,6 @@ def get_product_details(request, pk):
     # product_id = self.kwargs["pk"]
     context = {
         'product': product,
+        'STRIPE_PUBLIC_KEY':settings.STRIPE_PUBLISHABLE_KEY
     }
     return render(request, template_name, context)
