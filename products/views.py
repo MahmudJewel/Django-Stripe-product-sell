@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.views import View
 from .models import Product
-
+from django.shortcuts import render
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -53,3 +53,11 @@ class CreateCheckoutSessionView(View):
         })
 
 
+def get_product_details(request, pk):
+    template_name = 'product_details.html'
+    product = Product.objects.get(id=pk)
+    # product_id = self.kwargs["pk"]
+    context = {
+        'product': product,
+    }
+    return render(request, template_name, context)

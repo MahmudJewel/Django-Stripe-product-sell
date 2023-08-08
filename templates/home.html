@@ -184,7 +184,7 @@ button:disabled {
             <p class="card-text">
               £ {{ product.price }}
             </p>
-            <a href="#" class="btn btn-primary">View More Details</a>
+            <a href="{% url 'details' product.id %}" class="btn btn-primary">View More Details</a>
           </div>
         </div>
       </div>

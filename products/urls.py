@@ -7,9 +7,11 @@ from .views import (
     CancelView,
     # stripe_webhook,
     # StripeIntentView
+    get_product_details,
 )
 
 urlpatterns = [
+    path('details/<int:pk>/', get_product_details, name='details'),
     path('create-checkout-session/<int:pk>/', CreateCheckoutSessionView.as_view(), name='create-checkout-session'),
     path('success/', SuccessView.as_view(), name='success'),
     path('cancel/', CancelView.as_view(), name='cancel'),
