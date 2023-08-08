@@ -31,9 +31,9 @@ class CreateCheckoutSessionView(View):
                 {
                     'price_data': {
                         'currency': 'gbp',
-                        'unit_amount': 20,
+                        'unit_amount': int(product.price)*100,
                         'product_data': {
-                            'name': 'Demo product',
+                            'name': product.name,
                             # 'images': ['https://i.imgur.com/EHyR2nP.png'],
                         },
                     },
@@ -41,8 +41,8 @@ class CreateCheckoutSessionView(View):
                 },
             ],
             metadata={
-                # "product_id": product.id
-                "product_id": 1
+                "product_id": product.id
+                # "product_id": 1
             },
             mode='payment',
             success_url=YOUR_DOMAIN + '/success/',
