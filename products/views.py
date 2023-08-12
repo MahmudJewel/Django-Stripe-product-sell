@@ -67,45 +67,38 @@ def get_product_details(request, pk):
 @csrf_exempt
 def stripe_webhook(request):
     payload = request.body
-    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
     event = None
-
     try:
-        event = stripe.Webhook.construct_event(
-            payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
+        event = stripe.Event.construct_from(
+            json.loads(payload), stripe.api_key
         )
     except ValueError as e:
         # Invalid payload
+        print("=========", e)
         return HttpResponse(status=400)
-    except stripe.error.SignatureVerificationError as e:
-        # Invalid signature
-        return HttpResponse(status=400)
-
-    # Handle the checkout.session.completed event
-    if event['type'] == 'checkout.session.completed':
+    if event.type == 'checkout.session.completed':
         session = event['data']['object']
         print('Session ============> ', session)
-        customer_email = session["customer_details"]["email"]
-        product_id = session["metadata"]["product_id"]
+    return HttpResponse(status=200)
 
-        product = Product.objects.get(id=product_id)
+    # payload = request.body
+    # sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+    # event = None
 
-        send_mail(
-            subject="Here is your product",
-            message=f"Thanks for your purchase. Here is the product you ordered. The URL is {product.url}",
-            recipient_list=[customer_email],
-            from_email=settings.EMAIL_HOST_USER,
-            fail_silently=False,
-        )
-        # send_mail(
-	    #     'Subject here',
-	    # 'Here is the message.',
-	    # 'from@example.com',
-	    # ['to@example.com'],
-	    # fail_silently=False,
-        # )
-
-        # TODO - decide whether you want to send the file or the URL
+    # try:
+    #     event = stripe.Webhook.construct_event(
+    #         payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
+    #     )
+    # except ValueError as e:
+    #     # Invalid payload
+    #     print('invalid payload=============')
+    #     return HttpResponse(status=400)
+    # except stripe.error.SignatureVerificationError as e:
+    #     # Invalid signature
+    #     print('invalid signature=============')
+    #     return HttpResponse(status=400)
+    # print('events===>', event)
+    # Handle the checkout.session.completed event
     
     # elif event["type"] == "payment_intent.succeeded":
     #     intent = event['data']['object']
@@ -125,4 +118,4 @@ def stripe_webhook(request):
     #         from_email="matt@test.com"
     #     )
 
-    return HttpResponse(status=200)
+    # return HttpResponse(status=200)
