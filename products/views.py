@@ -1,6 +1,6 @@
 import json
 import stripe
-from django.core.mail import send_mail
+from django.core.mail import send_mail, BadHeaderError
 from django.conf import settings
 from django.views.generic import TemplateView
 from django.views.decorators.csrf import csrf_exempt
@@ -76,40 +76,34 @@ def stripe_webhook(request):
         # Invalid payload
         print("=========", e)
         return HttpResponse(status=400)
+    
+    # Handle the checkout.session.completed event
     if event.type == 'checkout.session.completed':
         session = event['data']['object']
         print('Session ============> ', session)
+        customer_email = session["customer_details"]["email"]
+        product_id = session["metadata"]["product_id"]
+        product = Product.objects.get(id=product_id)
+
+        body = {
+            "product_msg":"Thanks for your purchase. Here is the product you ordered.",
+            "product_name":f"Product name: {product.name}",
+            "product_price":f"Price: £ {product.price}"
+        }
+
+        message = "\n".join(body.values())
+        try:
+            send_mail(
+                "Here is your product",
+                message,
+                settings.EMAIL_HOST_USER,
+                [customer_email],
+            )
+            print("mail sent successfully=========>")
+        except BadHeaderError:
+            print ("mail send fail===========>", BadHeaderError)
+
     return HttpResponse(status=200)
-
-    # payload = request.body
-    # sig_header = request.META['HTTP_STRIPE_SIGNATURE']
-    # event = None
-
-    # try:
-    #     event = stripe.Webhook.construct_event(
-    #         payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
-    #     )
-    # except ValueError as e:
-    #     # Invalid payload
-    #     print('invalid payload=============')
-    #     return HttpResponse(status=400)
-    # except stripe.error.SignatureVerificationError as e:
-    #     # Invalid signature
-    #     print('invalid signature=============')
-    #     return HttpResponse(status=400)
-    # print('events===>', event)
-    # Handle the checkout.session.completed event
-    
-    # elif event["type"] == "payment_intent.succeeded":
-    #     intent = event['data']['object']
-
-    #     stripe_customer_id = intent["customer"]
-    #     stripe_customer = stripe.Customer.retrieve(stripe_customer_id)
-
-    #     customer_email = stripe_customer['email']
-    #     product_id = intent["metadata"]["product_id"]
-
-    #     product = Product.objects.get(id=product_id)
 
     #     send_mail(
     #         subject="Here is your product",
