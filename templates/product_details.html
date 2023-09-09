@@ -3,7 +3,6 @@
 
 <head>
     <title>Buy new product</title>
-    <script src="https://js.stripe.com/v3/"></script>
 </head>
 
 <section class="mt-5 text-center">
@@ -28,9 +27,11 @@
             </div>
         </div>
     </div>
+    <!--  -->
 </section>
 
 <!-- stripe js execute  -->
+<script src="https://js.stripe.com/v3/"></script>
 <script type="text/javascript">
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     // Create an instance of the Stripe object with your publishable API key
@@ -62,6 +63,8 @@
             });
     });
 
+    // here 
+    {% comment %}
     // Disable the button until we have Stripe set up on the page
     document.querySelector("button").disabled = true;
 
@@ -90,6 +93,7 @@
         document.querySelector("button").disabled = event.empty;
         document.querySelector("#card-error").textContent = event.error ? event.error.message : "";
     });
+    {% endcomment %}
     {% comment %}
     var form = document.getElementById("payment-form");
     form.addEventListener("submit", function (event) {
@@ -113,6 +117,8 @@
             });
     });
     {% endcomment %}
+    // end here 
+    
     // Calls stripe.confirmCardPayment
     // If the card requires authentication Stripe shows a pop-up modal to
     // prompt the user to enter authentication details without leaving your page.

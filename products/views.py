@@ -32,8 +32,10 @@ class CreateCheckoutSessionView(View):
                     'price_data': {
                         'currency': 'gbp',
                         'unit_amount': int(product.price)*100,
+                        # 'unit_amount': 200,
                         'product_data': {
-                            'name': product.name,
+                            # 'name': product.name,
+                            'name': 'demo product',
                             # 'images': ['https://i.imgur.com/EHyR2nP.png'],
                         },
                     },
@@ -56,7 +58,6 @@ class CreateCheckoutSessionView(View):
 def get_product_details(request, pk):
     template_name = 'product_details.html'
     product = Product.objects.get(id=pk)
-    # product_id = self.kwargs["pk"]
     context = {
         'product': product,
         'STRIPE_PUBLIC_KEY':settings.STRIPE_PUBLISHABLE_KEY
@@ -101,7 +102,7 @@ def stripe_webhook(request):
             )
             print("mail sent successfully=========>")
         except BadHeaderError:
-            print ("mail send fail===========>", BadHeaderError)
+            print ("mail send failed===========>", BadHeaderError)
 
     return HttpResponse(status=200)
 

@@ -2,11 +2,8 @@ from django.urls import path, include
 
 from .views import (
     CreateCheckoutSessionView,
-    # ProductLandingPageView,
     SuccessView,
     CancelView,
-    # stripe_webhook,
-    # StripeIntentView
     get_product_details,
     stripe_webhook,
 )
